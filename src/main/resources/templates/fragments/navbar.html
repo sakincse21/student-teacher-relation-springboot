@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" th:href="@{/dashboard}">WebApp</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="nav">
+
+            <ul class="navbar-nav me-auto">
+
+                <!-- Teacher Links -->
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''TEACHER'')')}">
+                    <a class="nav-link" th:href="@{/teacher/dashboard}">Teacher Dashboard</a>
+                </li>
+
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''TEACHER'')')}">
+                    <a class="nav-link" th:href="@{/teacher/courses}">Courses</a>
+                </li>
+
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''TEACHER'')')}">
+                    <a class="nav-link" th:href="@{/teacher/students}">Students</a>
+                </li>
+
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''TEACHER'')')}">
+                    <a class="nav-link" th:href="@{/teacher/assign}">Assign</a>
+                </li>
+
+                <!-- Student Links -->
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''STUDENT'')')}">
+                    <a class="nav-link" th:href="@{/student/dashboard}">Student Dashboard</a>
+                </li>
+
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''STUDENT'')')}">
+                    <a class="nav-link" th:href="@{/student/all-courses}">All Courses</a>
+                </li>
+
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''STUDENT'')')}">
+                    <a class="nav-link" th:href="@{/student/my-courses}">My Courses</a>
+                </li>
+
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''STUDENT'')')}">
+                    <a class="nav-link" th:href="@{/student/teachers}">Teachers</a>
+                </li>
+
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''STUDENT'')')}">
+                    <a class="nav-link" th:href="@{/student/profile}">My Profile</a>
+                </li>
+
+            </ul>
+
+            <span class="navbar-text text-white me-3">
+                User: <b th:text="${#authentication.name}"></b>
+            </span>
+
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button class="btn btn-outline-light btn-sm" type="submit">Logout</button>
+            </form>
+
+        </div>
+    </div>
+</nav>
+
+</body>
+</html>

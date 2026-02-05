@@ -10,4 +10,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     public Optional<Student> findById(Long id);
     public List<Student> findAll();
     public Student save(Student student);
+    Optional<Student> findByUserUsername(String username);
+
 }

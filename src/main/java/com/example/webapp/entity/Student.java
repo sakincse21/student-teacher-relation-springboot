@@ -2,6 +2,8 @@ package com.example.webapp.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "students")
@@ -37,4 +39,28 @@ public class Student {
     public void setName(String name) {
         this.name = name;
     }
+
+    @OneToOne
+    @JoinColumn(name = "user_id", unique = true)
+    private User user;
+
+    public User getUser() { return user; }
+
+    public void setUser(User user) { this.user = user; }
+
+
+    @ManyToMany
+    @JoinTable(
+            name = "student_courses",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    private Set<Course> courses = new HashSet<>();
+
+    public Set<Course> getCourses() { return courses; }
+    public void setCourses(Set<Course> courses) { this.courses = courses; }
+
+
 }
+
+
