@@ -35,4 +35,8 @@ public class Teacher {
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
+
+    public void setId(long l) {
+        this.id = l;
+    }
 }

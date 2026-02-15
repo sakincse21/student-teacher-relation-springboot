@@ -46,4 +46,8 @@ public class Course {
 
     public Set<Student> getStudents() { return students; }
     public void setStudents(Set<Student> students) { this.students = students; }
+
+    public void setId(long l) {
+        this.id = l;
+    }
 }

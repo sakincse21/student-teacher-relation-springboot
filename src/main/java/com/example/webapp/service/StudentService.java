@@ -3,7 +3,6 @@ package com.example.webapp.service;
 import com.example.webapp.dto.StudentDTO;
 import com.example.webapp.entity.Student;
 import com.example.webapp.repository.StudentRepository;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
