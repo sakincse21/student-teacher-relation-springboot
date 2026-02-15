@@ -6,10 +6,12 @@ import com.example.webapp.entity.User;
 import com.example.webapp.repository.StudentRepository;
 import com.example.webapp.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("!test")  // <-- ADD THIS LINE
 public class StudentSeeder implements CommandLineRunner {
 
     private final StudentRepository studentRepository;

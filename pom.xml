@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.0</version> <!-- Fixed: Changed from invalid 4.0.1 -->
+        <version>3.2.0</version>
         <relativePath/>
     </parent>
     
@@ -18,12 +18,7 @@
     <description>Demo project for Spring Boot</description>
     
     <properties>
-        <!-- Fix for Java 25 compatibility -->
-
-    <java.version>17</java.version>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
-        <net.bytebuddy.experimental>true</net.bytebuddy.experimental>
+        <java.version>17</java.version>
     </properties>
     
     <dependencies>
@@ -78,12 +73,20 @@
             <version>3.2.4</version>
         </dependency>
         
-        <!-- Test Dependencies - CRITICAL FIX -->
+        <!-- Test Dependencies - NO MOCKITO -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
             <exclusions>
+                <exclusion>
+                    <groupId>org.mockito</groupId>
+                    <artifactId>mockito-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.mockito</groupId>
+                    <artifactId>mockito-junit-jupiter</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.junit.vintage</groupId>
                     <artifactId>junit-vintage-engine</artifactId>
@@ -116,15 +119,6 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                </configuration>
-            </plugin>
-            
-            <!-- Fix for Java 25 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
                 </configuration>
             </plugin>
         </plugins>

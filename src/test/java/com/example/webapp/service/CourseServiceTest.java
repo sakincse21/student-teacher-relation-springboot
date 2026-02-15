@@ -6,6 +6,7 @@ import com.example.webapp.entity.User;
 import com.example.webapp.repository.CourseRepository;
 import com.example.webapp.repository.TeacherRepository;
 import com.example.webapp.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,9 +34,17 @@ class CourseServiceTest {
     @Autowired
     private UserRepository userRepository;
 
+    @BeforeEach
+    void setUp() {
+        // Clean database before each test
+        courseRepository.deleteAll();
+        teacherRepository.deleteAll();
+        userRepository.deleteAll();
+    }
+
     @Test
     void getCoursesByTeacherId_ReturnsCourses() {
-        // Save dependent entities
+        // Arrange - save dependent entities
         User user = new User("teacher1", "encoded", com.example.webapp.entity.Role.TEACHER);
         user = userRepository.save(user);
 
@@ -50,23 +59,27 @@ class CourseServiceTest {
         courseRepository.save(c1);
         courseRepository.save(c2);
 
+        // Act
         List<Course> result = courseService.getCoursesByTeacherId(teacher.getId());
 
+        // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
     }
 
     @Test
     void getCoursesByTeacherId_ReturnsEmptyList() {
+        // Act
         List<Course> result = courseService.getCoursesByTeacherId(999L);
 
+        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
     @Test
     void saveCourse_SavesSuccessfully() {
-        // Save dependent entities
+        // Arrange - save dependent entities
         User user = new User("teacher2", "encoded", com.example.webapp.entity.Role.TEACHER);
         user = userRepository.save(user);
 
@@ -81,9 +94,12 @@ class CourseServiceTest {
         course.setCourseTitle("Advanced Topics");
         course.setTeacher(teacher);
 
+        // Act
         Course result = courseService.save(course);
 
+        // Assert
         assertNotNull(result);
         assertEquals("CSE-301", result.getCourseCode());
+        assertEquals("Advanced Topics", result.getCourseTitle());
     }
 }

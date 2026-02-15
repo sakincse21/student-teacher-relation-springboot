@@ -2,6 +2,7 @@ package com.example.webapp.repository;
 
 import com.example.webapp.entity.Teacher;
 import com.example.webapp.entity.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -20,6 +21,12 @@ class TeacherRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @BeforeEach
+    void setUp() {
+        teacherRepository.deleteAll();
+        userRepository.deleteAll();
+    }
 
     @Test
     void saveTeacher_PersistsSuccessfully() {

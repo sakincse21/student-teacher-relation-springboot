@@ -1,45 +1,45 @@
 package com.example.webapp.security;
 
+import com.example.webapp.entity.Role;
 import com.example.webapp.entity.User;
 import com.example.webapp.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
-import java.util.Optional;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@ActiveProfiles("test")
+@Transactional
 class CustomUserDetailsServiceTest {
 
-    @Mock
-    private UserRepository userRepository;
-
-    @InjectMocks
+    @Autowired
     private CustomUserDetailsService userDetailsService;
 
-    private User testUser;
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeEach
     void setUp() {
-        testUser = new User();
-        testUser.setUsername("testuser");
-        testUser.setPassword("encodedpassword");
-        testUser.setRole(com.example.webapp.entity.Role.STUDENT);
+        // Clean database before each test
+        userRepository.deleteAll();
+        
+        // Create test user
+        User user = new User();
+        user.setUsername("testuser");
+        user.setPassword("{bcrypt}$2a$10$X64I5Z5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q"); // BCrypt encoded "password"
+        user.setRole(Role.STUDENT);
+        userRepository.save(user);
     }
 
     @Test
     void loadUserByUsername_UserExists_ReturnsUserDetails() {
-        // Arrange
-        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
-
         // Act
         UserDetails userDetails = userDetailsService.loadUserByUsername("testuser");
 
@@ -48,18 +48,39 @@ class CustomUserDetailsServiceTest {
         assertEquals("testuser", userDetails.getUsername());
         assertTrue(userDetails.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_STUDENT")));
-        verify(userRepository, times(1)).findByUsername("testuser");
+        assertFalse(userDetails.getPassword().isEmpty());
     }
 
     @Test
     void loadUserByUsername_UserNotFound_ThrowsException() {
-        // Arrange
-        when(userRepository.findByUsername("nonexistent")).thenReturn(Optional.empty());
-
         // Act & Assert
         assertThrows(UsernameNotFoundException.class, 
             () -> userDetailsService.loadUserByUsername("nonexistent"));
-        
-        verify(userRepository, times(1)).findByUsername("nonexistent");
+    }
+
+    @Test
+    void loadUserByUsername_TeacherUser_ReturnsTeacherRole() {
+        // Arrange - create teacher user
+        User teacherUser = new User();
+        teacherUser.setUsername("teacheruser");
+        teacherUser.setPassword("{bcrypt}$2a$10$X64I5Z5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q");
+        teacherUser.setRole(Role.TEACHER);
+        userRepository.save(teacherUser);
+
+        // Act
+        UserDetails userDetails = userDetailsService.loadUserByUsername("teacheruser");
+
+        // Assert
+        assertNotNull(userDetails);
+        assertEquals("teacheruser", userDetails.getUsername());
+        assertTrue(userDetails.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_TEACHER")));
+    }
+
+    @Test
+    void loadUserByUsername_CaseInsensitive_ThrowsExceptionForWrongCase() {
+        // Act & Assert - Spring Security is case-sensitive by default
+        assertThrows(UsernameNotFoundException.class, 
+            () -> userDetailsService.loadUserByUsername("TESTUSER"));
     }
 }

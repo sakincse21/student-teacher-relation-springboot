@@ -3,9 +3,11 @@ package com.example.webapp.config;
 import com.example.webapp.entity.Student;
 import com.example.webapp.repository.StudentRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("!test")  // <-- ADD THIS LINE
 public class DataSeeder implements CommandLineRunner {
 
     private final StudentRepository studentRepository;
